@@ -539,8 +539,10 @@ class TensorStore:
         """
         if not hasattr(self, "_remote_blocks_store_manager"):
             address = address.as_posix() if isinstance(address, pathlib.Path) else address
+            print(f"Initializing remote block store manager with address {address}")
             self._remote_blocks_store_manager = BlocksStoreManager(address, authkey=auth_key, ctx=_SpawnContext())
             self._remote_blocks_store = None
+            print(f"Initializing file lock at address {address}")
             self._manager_start_stop_filelock = _FileLock(f"{address}.lock")
 
             # container for keeping map between tensor_id and numpy array weak ref
@@ -561,6 +563,7 @@ class TensorStore:
 
     def start(self):
         """Start remote block store."""
+        print(f"Acquiring file lock and starting block store.")
         with self._manager_start_stop_filelock:
             if self._remote_blocks_store is not None:
                 raise RuntimeError("Remote block store is already started/connected")
@@ -1102,6 +1105,7 @@ class TensorStoreSerializerDeserializer(BaseRequestsResponsesSerializerDeseriali
             url: address of data store
             authkey: authentication key required to setup connection. If not provided, current process authkey will be used
         """
+        print(f"Creating and starting tensor store at {url} with authkey {authkey}")
         self._tensor_store = self._create(url, authkey)
         self._tensor_store.start()
 

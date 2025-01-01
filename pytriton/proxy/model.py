@@ -416,6 +416,7 @@ class TritonPythonModel:
             model_first_instance_name = "_".join(self._model_instance_name.split("_")[:-1] + ["0"])
             if self._model_instance_name == model_first_instance_name:
                 inference_handler_config = TritonInferenceHandlerConfigGenerator(data_socket).get_config()
+                print(f"Starting serializer/deserializer with data socket: {data_socket}")
                 self._serializer_deserializer.start(data_socket)
 
                 self._handshake_server = HandshakeServer(handshake_socket, inference_handler_config)
